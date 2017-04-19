@@ -1,0 +1,124 @@
+body {
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+}
+#progress {
+	position: fixed;
+	top: 0;
+	left: -6px;
+	width: 0%;
+	height: 2px;
+	background: red;
+}
+#progress:before,
+#progress:after {
+	content: "";
+	position: absolute;
+	height: 2px;
+	opacity: 0.6;
+	box-shadow: red 1px 0 6px 1px;
+	border-radius: 100%;
+}
+#progress:before {
+	width: 20px;
+	right: 0;
+	clip: rect(-6px, 22px, 14px, 10px);
+}
+#progress:after {
+	width: 180px;
+	right: -80px;
+	clip: rect(-6px, 90px, 14px, -6px);
+}
+.btn {
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	color: #333;
+	background-color: #fff;
+	border-color: #ccc;
+	margin: 0 15px;
+}
+
+.container {
+	padding: 0 15px;
+}
+.js-operation {
+	padding: 15px;
+}
+.js-operation button {
+	margin: 0 15px;
+}
+.btn-primary {
+	color: #fff;
+	background-color: #337ab7;
+	border-color: #2e6da4;
+}
+
+svg {
+	border: 1px solid #ccc;
+}
+
+@keyframes show {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+@keyframes blink {
+	0% { stroke: #ffd400; opacity: 1; }
+	50% { stroke: #ffd400; opacity: 1; }
+	to {  }
+}
+.show {
+	animation: blink 1s ease;
+}
+.hide {
+	opacity: 0.2;
+}
+.userid {
+	font-size: 10px;
+}
+.node {
+	opacity: 0.7;
+}
+.line {
+	animation: blink 1s ease;
+	stroke: #777;
+	stroke-width: 1;
+	opacity: 0.7;
+	marker-end: url(#arrow);
+}
+@keyframes fly {
+	from { stroke-dashoffset: 0;  }
+	to { stroke-dashoffset: 20px; }
+}
+.predict {
+	animation: show 1s linear infinite alternate;
+	stroke: #555;
+	stroke-width: 1;
+	stroke-dasharray: 3;
+	marker-end: url(#arrow);
+}
+
+.chart-line {
+	fill: none;
+	stroke: steelblue;
+	stroke-width: 2px;
+}

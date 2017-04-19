@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>传播路径可视化</title>
+<meta charset="utf-8">
+<style type="text/css">
+#progress {
+	position: fixed;
+	top: 0;
+	left: -6px;
+	width: 0%;
+	height: 2px;
+	background: red;
+}
+#progress:before,
+#progress:after {
+	content: "";
+	position: absolute;
+	height: 2px;
+	opacity: 0.6;
+	box-shadow: red 1px 0 6px 1px;
+	border-radius: 100%;
+}
+#progress:before {
+	width: 20px;
+	right: 0;
+	clip: rect(-6px, 22px, 14px, 10px);
+}
+#progress:after {
+	width: 180px;
+	right: -80px;
+	clip: rect(-6px, 90px, 14px, -6px);
+}
+body {
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+}
+</style>
+<link rel="stylesheet" type="text/css" href="../css/index.css">
+<script src="../lib/d3-v4.7.4.min.js"></script>
+</head>
+<body>
+<div id="progress"></div>
+</body>
+<script src="../js/path.js"></script>
+<script type="text/javascript">
+var meter = document.querySelector("#progress");
+var width = 960;
+var height = 600;
+var radius = 2;
+var transform = d3.zoomIdentity;
+var GD_data = {};	// 全局数据
+var G_curr_node; 	// 鼠标当前所在node
+var G_color = d3.scaleOrdinal().range(d3.schemeCategory20);
+var context = d3.select("body").append("canvas")
+	.attr("id", "canvas")
+	.attr("width", width)
+	.attr("height", height)
+	.call(d3.zoom().scaleExtent([1/10000, 8]).on("zoom", zoom))
+	.on("mousemove", mousemoved)
+	.node().getContext("2d")
+	;
+var G_simulation = d3.forceSimulation()
+	.force("charge", d3.forceManyBody())
+	.force("link", d3.forceLink().distance(20).strength(1)
+		.id(function(d, i){ return d.id; }))
+	.force("x", d3.forceX())
+	.force("y", d3.forceY())
+	.force("center", d3.forceCenter(width/2, height/2))
+	;
+// 获取数据
+// d3.request("../data/path-link-b76cde.json")			// biger
+d3.request("../data/path-link-abe47d.json")		// middle
+// d3.request("../data/path-link-85f0c2.json")		// little
+	.mimeType("application/json")
+	.response(function(xhr) {
+		var links = JSON.parse(xhr.responseText);
+		var nodes = extract_nodes(xhr.responseText);
+		var n = links.length;
+		var null_index;
+		for (var i = 0; i < n; i++) {
+			var item = links[i];
+			if (item['source'] == "") {
+				null_index = i;
+				continue;
+			}
+			item['id'] = item.source + "-" + item.target;
+		}
+		links.splice(null_index, 1)		// 删除root和null的连接
+		GD_data['nodes'] = nodes;
+		GD_data['links'] = links;
+		main();
+	})
+	.get()
+;
+
+// 入口函数
+function main(){
+	var nodes = GD_data.nodes,
+		links = GD_data.links;
+
+	var worker = new Worker("../js/path-tick.js");
+
+	worker.postMessage({
+		width: width,
+		height: height,
+		nodes: nodes,
+		links: links
+	});
+
+	worker.onmessage = function(event) {
+		switch (event.data.type) {
+			case "tick": return ticked(event.data);
+			case "end": return ended(event.data);
+		}
+	};
+}
+
+/**
+ * 进度条
+ */
+function ticked(data) {
+  var progress = data.progress;
+  meter.style.width = 100 * progress + "%";
+}
+
+/**
+ * 布局计算完成
+ */
+function ended(data) {
+	meter.style.display = "none";
+	GD_data['nodes'] = data.nodes;
+	GD_data['links'] = data.links;
+	G_simulation.nodes(data.nodes);
+	G_simulation.force("link").links(data.links);
+	G_simulation.stop();
+	redraw();
+}
+
+</script>
+</html>
