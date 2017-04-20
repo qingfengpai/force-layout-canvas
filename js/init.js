@@ -5,8 +5,9 @@ var meter = document.querySelector("#progress");
 var GD_data = {};	// 全局数据
 
 // 获取数据
-// d3.request("../data/path-link-abe47d.json")		// middle
-d3.request("../data/path-link-85f0c2.json")		// little
+// d3.request("../data/path-link-b76cde.json")			// biger
+d3.request("../data/path-link-abe47d.json")		// middle
+// d3.request("../data/path-link-85f0c2.json")		// little
 	.mimeType("application/json")
 	.response(function(xhr) {
 		var links = JSON.parse(xhr.responseText);

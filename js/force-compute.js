@@ -1,8 +1,9 @@
 importScripts("d3-v4.7.4.min.js");
 
-var width;
-var height;
-var G_radius;
+var width;			// canvas 宽度
+var height;			// canvas 高度
+var G_timer;		// 定时器
+var G_radius;		// 节点半径
 var G_nodes = [];
 var G_links = [];
 var GD_wbids = [];
@@ -70,12 +71,12 @@ function init(data){
 	}
 	// 删除root和null的连接
 	links.splice(null_index, 1);
-	// 初始化根节点
-	add_node(nodes[0]);
-	restart(G_nodes, G_links);
+	// // 初始化根节点
+	// add_node(nodes[0]);
+	// restart(G_nodes, G_links);
 
-	process(nodes, links);
-	// restart(nodes, links);
+	// process(nodes, links);
+	restart(nodes, links);
 }
 
 
@@ -89,18 +90,19 @@ function process(p_nodes, p_links) {
 	var index = 1;
 
 	G_timer = setInterval(function(){
-		// var count = Math.ceil(Math.random() * 10);
-		// while (count > 0) {
-			// try {
+		var count = Math.ceil(Math.random() * 10);
+		if (G_nodes.length == p_nodes.length) { clearInterval(G_timer); }
+		while (count > 0) {
+			try {
 				add_node(p_nodes[index]);
 				add_link(p_links[index-1]);
-			// } catch (e) {
-			// 	break;
-			// } finally {
+			} catch (e) {
+				break;
+			} finally {
 				index++;
-				// count--;
-			// }
-		// }
+				count--;
+			}
+		}
 		restart(G_nodes, G_links);
 	}, per);
 

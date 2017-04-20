@@ -25,8 +25,16 @@ function redraw(nodes, links) {
 	context.translate(transform.x, transform.y);
 	context.scale(transform.k, transform.k);
 
+	// var color = "#999";
+	// context.lineWidth = 1;
+	// context.fillStyle = color;
+	// context.strokeStyle = color;
+	// context.globalAlpha = .8;
+
+	// context.beginPath();
 	nodes.forEach(drawNode);
 	links.forEach(drawLink);
+	// context.stroke();
 
 	context.restore();
 }
@@ -46,9 +54,10 @@ function drawLink(l) {
  * 画点
  */
 function drawNode(d) {
+	// context.fillRect(d.x-1.5, d.y-1.5, 3, 3);
+
 	context.beginPath();
 	context.moveTo(d.x + 3, d.y);
-	context.lineWidth = 1;
 	context.arc(d.x, d.y, 3, 0, (radius+1+1)*Math.PI);
 	change_color(context, d);
 	context.fill();
@@ -63,13 +72,13 @@ function change_color(context, d){
 	var apacity = 1;
 	var new_add = false;
 
-	if (GD_wbids.indexOf(d.id) == -1) {
-		color = "red";
-		new_add = true;
-		GD_wbids.push(d.id);
-	}
+	// if (GD_wbids.indexOf(d.id) == -1) {
+	// 	color = "red";
+	// 	new_add = true;
+	// 	GD_wbids.push(d.id);
+	// }
 
-	if (!new_add) {
+	// if (!new_add) {
 		if (!color && !d.ancestor) {		// link
 			color = "#999";
 		} else {
@@ -84,7 +93,7 @@ function change_color(context, d){
 				apacity = 0.2;
 				break;
 		}
-	}
+	// }
 
 	context.fillStyle = color;
 	context.strokeStyle = color;
@@ -139,11 +148,11 @@ function get_focus_node(node) {
 	if (!G_curr_node) { G_curr_node = node; }
 	else if (G_curr_node.id === node.id) { return; }
 	G_curr_node = node;
-	console.log("mouseover: ", node);
+	// console.log("mouseover: ", node);
 	var nids = node.ancestor.split(",")
 	nids.shift(); 			// 删除第一个元素 null, 没有意义
 	nids.push(node.id);		// 把自身添加进去
-	console.log("mouseover: ", nids);
+	// console.log("mouseover: ", nids);
 	hilight_path(nids);
 }
 
